@@ -1,6 +1,8 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
+// 1. IMPORTAMOS EL OPTIMIZADOR DE IMÁGENES DE NEXT.JS
+import Image from "next/image"
 import { motion, AnimatePresence, Variants } from "framer-motion"
 import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react"
 
@@ -42,14 +44,14 @@ export function ImageCarousel() {
     setPage([page + newDirection, newDirection])
   }, [page])
 
-  // Autoplay que se detiene al poner el mouse encima
+  // Autoplay
   useEffect(() => {
     if (!isAutoPlaying) return
     const interval = setInterval(() => paginate(1), 6000)
     return () => clearInterval(interval)
   }, [isAutoPlaying, paginate])
 
-  // --- ANIMACIONES ELEGANTES (TIPO FADE Y ZOOM SUTIL) ---
+  // --- ANIMACIONES ELEGANTES ---
   const variants: Variants = {
     enter: (direction: number) => ({
       x: direction > 0 ? 30 : -30,
@@ -74,11 +76,10 @@ export function ImageCarousel() {
   const currentItem = carouselItems[currentIndex]
 
   return (
-    // Forzamos tipografía corporativa y damos un fondo limpio a la sección
     <section className="py-24 bg-[#f8fafc] overflow-hidden font-[Tahoma,Verdana,sans-serif]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* --- ENCABEZADO DE LA SECCIÓN --- */}
+        {/* --- ENCABEZADO --- */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -111,16 +112,28 @@ export function ImageCarousel() {
               transition={{ duration: 0.8, ease: [0.25, 1, 0.5, 1] }} 
               className="absolute inset-0"
             >
-              {/* IMAGEN: Movimiento imperceptible para darle vida */}
-              <motion.img 
+              {/* AQUÍ ESTÁ LA OPTIMIZACIÓN:
+                 Envolvemos el componente Image de Next.js en un motion.div 
+                 para seguir teniendo la animación de zoom, pero cargando la imagen súper rápido. 
+              */}
+              <motion.div 
+                className="absolute inset-0 w-full h-full"
                 animate={{ scale: [1, 1.05] }}
                 transition={{ duration: 20, repeat: Infinity, repeatType: "reverse", ease: "linear" }}
-                src={currentItem.image} 
-                alt={currentItem.title}
-                className="absolute inset-0 w-full h-full object-cover"
-              />
+              >
+                <Image 
+                  src={currentItem.image} 
+                  alt={currentItem.title}
+                  fill // Ocupa todo el contenedor
+                  className="object-cover" // Se comporta igual que object-fit: cover
+                  // Le decimos que la primera imagen es prioridad absoluta
+                  priority={currentIndex === 0}
+                  // Le decimos cómo cargar según el tamaño de la pantalla para ahorrar datos
+                  sizes="(max-width: 768px) 100vw, 1200px" 
+                />
+              </motion.div>
               
-              {/* DEGRADADO SOBRIO: Oscuro a la izquierda, transparente a la derecha */}
+              {/* DEGRADADO SOBRIO */}
               <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent z-10" />
 
               {/* CONTENIDO DE TEXTO */}
@@ -130,7 +143,6 @@ export function ImageCarousel() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3, duration: 0.8 }}
                 >
-                  {/* DISEÑO SOBRIO: Texto limpio en lugar de la etiqueta pesada */}
                   <span className="block text-[#a3c74a] text-[11px] md:text-xs font-bold uppercase tracking-[0.3em] mb-4">
                     Riopaila Agrícola
                   </span>
@@ -147,7 +159,7 @@ export function ImageCarousel() {
             </motion.div>
           </AnimatePresence>
 
-          {/* --- CONTROLES MODERNOS (CÁPSULA) --- */}
+          {/* --- CONTROLES --- */}
           <div className="absolute bottom-8 right-8 md:bottom-10 md:right-12 z-30 flex items-center gap-6 px-6 py-3 bg-black/20 backdrop-blur-md border border-white/10 rounded-full shadow-2xl">
             
             <button 
@@ -169,8 +181,8 @@ export function ImageCarousel() {
                   }}
                   className={`transition-all duration-500 rounded-full ${
                     currentIndex === index 
-                    ? "w-8 h-1.5 bg-white" // Punto activo blanco y alargado
-                    : "w-2 h-1.5 bg-white/30 hover:bg-white/60" // Puntos inactivos
+                    ? "w-8 h-1.5 bg-white" 
+                    : "w-2 h-1.5 bg-white/30 hover:bg-white/60" 
                   }`}
                   aria-label={`Ir a imagen ${index + 1}`}
                 />
