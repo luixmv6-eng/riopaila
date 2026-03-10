@@ -1,20 +1,49 @@
 "use client"
 
+import React, { useState, useEffect } from "react"
 import { motion, Variants } from "framer-motion"
-import { Leaf, Droplets, Wind, BarChart3, Factory, Bug, Trees, ShieldCheck, Target, ArrowRight } from "lucide-react"
+import { Leaf, Droplets, Sun, Waves, TreePine, Cloud, ShieldCheck } from "lucide-react"
 import Link from "next/link"
 
 /* --------------------------------------------------------------------------
-   ANIMACIONES
+   COMPONENTE AUXILIAR: CONTADOR NUMÉRICO ANIMADO
+   -------------------------------------------------------------------------- */
+const AnimatedNumber = ({ end, decimals = 0, duration = 2000 }: { end: number, decimals?: number, duration?: number }) => {
+  const [value, setValue] = useState(0)
+
+  useEffect(() => {
+    let startTime: number | null = null
+    let animationFrame: number
+
+    const updateCounter = (timestamp: number) => {
+      if (!startTime) startTime = timestamp
+      const progress = Math.min((timestamp - startTime) / duration, 1)
+      
+      const easeProgress = 1 - Math.pow(1 - progress, 4)
+      setValue(end * easeProgress)
+
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(updateCounter)
+      } else {
+        setValue(end)
+      }
+    }
+
+    animationFrame = requestAnimationFrame(updateCounter)
+    return () => cancelAnimationFrame(animationFrame)
+  }, [end, duration])
+
+  return <span>{value.toLocaleString('es-CO', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}</span>
+}
+
+/* --------------------------------------------------------------------------
+   ANIMACIONES PRINCIPALES
    -------------------------------------------------------------------------- */
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.1
-    },
+    transition: { staggerChildren: 0.15, delayChildren: 0.1 },
   },
 }
 
@@ -27,268 +56,326 @@ const itemVariants: Variants = {
   },
 }
 
-const accionesClaves = [
-  "Evaluar y formular proyectos de sistemas de riego que utilicen energías renovables",
-  "Aumentar el número de sistemas de riego eficiente",
-  "Continuar con la participación activa en las diferentes asociaciones de los ríos",
-  "Aumentar las áreas forestales en predios propios",
-  "Aumentar el área de adecuación con labranza reducida"
-]
-
 export default function GestionAmbiental() {
-  return (
-    <motion.div
-      style={{ fontFamily: 'Tahoma, Geneva, sans-serif' }}
-      className="space-y-16 pb-16"
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true }}
-      variants={containerVariants}
-    >
-      {/* ================= SECCIÓN 1: HEADER ================= */}
-      <motion.div variants={itemVariants} className="relative px-4 max-w-7xl mx-auto">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="h-[2px] w-12 bg-red-600" />
-          <span className="text-red-600 font-bold text-xs uppercase tracking-[0.3em]">
-            Comprometidos con el Medio Ambiente
-          </span>
-        </div>
-        
-        <h1 className="text-5xl md:text-6xl font-black text-red-800 tracking-tight not-italic">
-          Gestión Ambiental
-        </h1>
-        
-        <p className="text-gray-600 mt-6 text-lg md:text-xl leading-relaxed max-w-4xl font-normal">
-          El fortalecimiento de una cultura de preservación hace parte de nuestra filosofía empresarial. Propiciamos la participación e implementación de acciones que contribuyen a mitigar el cambio climático y los impactos ambientales.
-        </p>
-      </motion.div>
+  
+  // Acciones Clave de Riopaila
+  const accionesClaves = [
+    "Evaluar y formular proyectos de sistemas de riego que utilicen energías renovables.",
+    "Aumentar el número de sistemas de riego eficiente.",
+    "Continuar con la participación activa en las diferentes asociaciones de los ríos.",
+    "Aumentar las áreas forestales en predios propios.",
+    "Aumentar el área de adecuación con labranza reducida."
+  ]
 
-      {/* ================= EJE 1: GESTIÓN HÍDRICA (DASHBOARD) ================= */}
-      <motion.div 
-        variants={itemVariants}
-        className="group relative bg-white rounded-[3rem] p-1 md:p-2 shadow-[0_30px_60px_-15px_rgba(153,27,27,0.05)] border border-gray-100 overflow-hidden max-w-7xl mx-auto mx-4"
+  return (
+    <>
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes dropFall {
+          0% { top: -10%; opacity: 0; transform: scaleY(0.5); }
+          20% { opacity: 1; transform: scaleY(1); }
+          80% { opacity: 1; transform: scaleY(1); }
+          100% { top: 90%; opacity: 0; transform: scaleY(0.5); }
+        }
+        @keyframes waveMove {
+          0% { transform: translateX(0) scaleY(1); }
+          50% { transform: translateX(-25%) scaleY(0.8); }
+          100% { transform: translateX(-50%) scaleY(1); }
+        }
+      `}} />
+
+      {/* Forzamos Tahoma estrictamente y usamos un fondo súper limpio */}
+      <motion.div
+        style={{ fontFamily: 'Tahoma, Geneva, sans-serif' }}
+        className="space-y-16 pb-16 bg-[#fafbfc]"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={containerVariants}
       >
-        <div className="bg-red-50/30 rounded-[2.8rem] p-8 md:p-12 flex flex-col lg:flex-row justify-between items-start gap-12">
+        {/* ================= SECCIÓN 1: HEADER (COLORES RIOPAILA) ================= */}
+        <motion.div variants={itemVariants} className="relative px-6 max-w-7xl mx-auto pt-12">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="h-[2px] w-12 bg-[#dc2626]" /> {/* Rojo vibrante */}
+            <span className="text-[#dc2626] font-bold text-xs uppercase tracking-[0.3em]">
+              Comprometidos con el Medio Ambiente
+            </span>
+          </div>
           
-          {/* Información y Barras de Progreso */}
-          <div className="w-full lg:w-1/2 space-y-8">
-            <div>
-              <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-1.5 rounded-full text-xs font-bold mb-4 border border-blue-100">
-                <Droplets size={16} className="animate-pulse" /> Elemento Esencial de Vida
+          <h1 className="text-5xl md:text-6xl font-black text-[#7f1d1d] tracking-tight">
+            Gestión Ambiental
+          </h1>
+          
+          <p className="text-gray-600 mt-8 text-xl leading-relaxed max-w-3xl font-normal">
+            El fortalecimiento de una cultura de preservación hace parte de nuestra filosofía empresarial. Propiciamos la participación e implementación de acciones que contribuyen a mitigar el cambio climático y los impactos ambientales.
+          </p>
+        </motion.div>
+
+        <div className="px-6 max-w-7xl mx-auto space-y-10">
+          
+          {/* ================= EJE 1: GESTIÓN HÍDRICA ================= */}
+          <motion.div 
+            variants={itemVariants}
+            className="group relative bg-white rounded-[3rem] p-1 md:p-2 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.05)] border border-gray-100 overflow-hidden"
+          >
+            <div className="bg-slate-50/50 rounded-[2.8rem] p-8 md:p-12 flex flex-col gap-10">
+              
+              <div className="w-full">
+                <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-xs font-bold mb-4 shadow-sm border border-blue-100">
+                  <Waves size={16} className="animate-pulse" /> Elemento Esencial de Vida
+                </div>
+                <h3 className="text-[#7f1d1d] font-black text-4xl lg:text-5xl tracking-tight leading-[1.1] mb-5">
+                  Gestión del Recurso Hídrico
+                </h3>
+                <p className="text-[#64748b] leading-relaxed font-normal text-[17px] max-w-3xl">
+                  Implementamos sistemas de riego más eficientes y herramientas de programación basadas en balance hídrico. Además, apoyamos el cuidado de las cuencas de los ríos <strong>Bugalagrande y La Paila</strong> a través de ASORIBU y AURPA.
+                </p>
               </div>
-              <h3 className="text-red-800 font-bold text-3xl tracking-tight mb-3">Gestión del Recurso Hídrico</h3>
-              <p className="text-gray-600 leading-relaxed font-normal">
-                Implementamos sistemas de riego más eficientes y herramientas de programación basadas en balance hídrico. Además, apoyamos el cuidado de las cuencas de los <strong>ríos Bugalagrande y La Paila</strong> a través de ASORIBU y AURPA.
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                
+                {/* Balde 1: Eficiencia de Riego (Mantenemos azul por el agua) */}
+                <div className="flex items-center gap-6 bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm hover:border-blue-200 transition-all">
+                  <div className="relative w-16 h-24 border-[3px] border-gray-200 rounded-b-xl rounded-t-[4px] overflow-hidden shrink-0 bg-gray-50 shadow-inner">
+                    <div className="absolute top-0 left-0 w-full h-full z-10">
+                      <div className="absolute left-[30%] w-1 h-3 bg-blue-400 rounded-full animate-[dropFall_1.2s_linear_infinite]" style={{ animationDelay: '0.1s' }}></div>
+                      <div className="absolute left-[60%] w-1.5 h-4 bg-blue-300 rounded-full animate-[dropFall_1.5s_linear_infinite]" style={{ animationDelay: '0.6s' }}></div>
+                    </div>
+                    <motion.div
+                      initial={{ height: "0%" }}
+                      whileInView={{ height: "100%" }}
+                      transition={{ duration: 3, ease: "easeOut", delay: 0.2 }}
+                      className="w-full bg-gradient-to-t from-blue-500 to-blue-300 absolute bottom-0 left-0 rounded-b-[8px]"
+                    >
+                      <div className="absolute -top-1 left-0 w-[200%] h-2 bg-blue-200 rounded-full opacity-60 animate-[waveMove_3s_ease-in-out_infinite]"></div>
+                    </motion.div>
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <div className="flex items-center gap-2 text-[14px] font-bold text-[#7f1d1d] mb-1">
+                      <Droplets size={16} className="shrink-0"/> <span className="truncate">Riego por Ventanas</span>
+                    </div>
+                    <p className="text-3xl font-black text-blue-600 leading-none mb-2">
+                      +<AnimatedNumber end={10} decimals={0} />%
+                    </p>
+                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest break-words leading-tight">
+                      Incremento de área cubierta, reduciendo uso de sifones.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Balde 2: Consumo Específico (Tonos Rojos Riopaila) */}
+                <div className="flex items-center gap-6 bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm hover:border-[#dc2626] transition-all">
+                  <div className="relative w-16 h-24 border-[3px] border-gray-200 rounded-b-xl rounded-t-[4px] overflow-hidden shrink-0 bg-gray-50 shadow-inner">
+                    <div className="absolute top-0 left-0 w-full h-full z-10">
+                      <div className="absolute left-[30%] w-1 h-3 bg-[#dc2626] rounded-full animate-[dropFall_1.2s_linear_infinite]" style={{ animationDelay: '0.2s' }}></div>
+                      <div className="absolute left-[60%] w-1.5 h-4 bg-[#f87171] rounded-full animate-[dropFall_1.6s_linear_infinite]" style={{ animationDelay: '0.7s' }}></div>
+                    </div>
+                    <motion.div
+                      initial={{ height: "0%" }}
+                      whileInView={{ height: "70%" }}
+                      transition={{ duration: 3, ease: "easeOut", delay: 0.4 }}
+                      className="w-full bg-gradient-to-t from-[#991b1b] to-[#dc2626] absolute bottom-0 left-0 rounded-b-[8px]"
+                    >
+                      <div className="absolute -top-1 left-0 w-[200%] h-2 bg-[#fca5a5] rounded-full opacity-60 animate-[waveMove_3s_ease-in-out_infinite]"></div>
+                    </motion.div>
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <div className="flex items-center gap-2 text-[14px] font-bold text-[#7f1d1d] mb-1">
+                      <Leaf size={16} className="shrink-0"/> <span className="truncate">Consumo Específico</span>
+                    </div>
+                    <p className="text-3xl font-black text-[#dc2626] leading-none mb-2">
+                      <AnimatedNumber end={1070} decimals={0} /> <span className="text-sm">m³/Ha</span>
+                    </p>
+                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest break-words leading-tight">
+                      Compromiso de reducción de huella hídrica (Meta).
+                    </p>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </motion.div>
+
+          {/* ================= EJES 2 y 3: TARJETAS INTERACTIVAS ================= */}
+          <div className="grid md:grid-cols-2 gap-8">
+            
+            {/* EJE 2: Control y Corredores Biológicos */}
+            <motion.div
+              variants={itemVariants}
+              whileHover={{ scale: 1.02 }}
+              className="group relative flex flex-col justify-between gap-6 p-10 bg-white rounded-[3rem] border border-gray-100 hover:border-[#dc2626]/50 transition-all shadow-sm hover:shadow-xl overflow-hidden"
+            >
+              <div>
+                <div className="w-16 h-16 mb-6 flex items-center justify-center rounded-2xl bg-red-50 text-red-600 transition-colors duration-300 group-hover:bg-[#7f1d1d] group-hover:text-white">
+                  <TreePine size={32} />
+                </div>
+                <h4 className="font-bold text-2xl text-[#7f1d1d] mb-3">Control y Corredores Biológicos</h4>
+                <p className="text-gray-500 font-normal leading-relaxed mb-8">
+                  Estrategia sectorial con cero aplicaciones de insecticidas. Mantenemos el equilibrio del ecosistema mediante fauna benéfica y vegetación natural.
+                </p>
+                
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col justify-center text-center">
+                    <p className="text-3xl font-black text-[#7f1d1d]">
+                      <AnimatedNumber end={211} decimals={0} />
+                    </p>
+                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest leading-tight mt-1">Hectáreas<br/>Conservadas</p>
+                  </div>
+                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col justify-center text-center">
+                    <p className="text-3xl font-black text-[#dc2626]">
+                      <AnimatedNumber end={1.1} decimals={1} />%
+                    </p>
+                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest leading-tight mt-1">Infestación<br/>Diatraea</p>
+                  </div>
+                </div>
+
+                {/* --- ANIMACIÓN: EL BOSQUE CRECIENDO --- */}
+                <div className="relative h-24 w-full rounded-2xl bg-gradient-to-b from-[#fef2f2] to-white border border-[#fee2e2] overflow-hidden p-3 flex gap-5 items-end justify-center shadow-inner">
+                  {/* Sol animado de fondo */}
+                  <Sun className="absolute top-2 right-2 h-6 w-6 text-amber-400 animate-[pulse_4s_ease-in-out_infinite] opacity-50" />
+                  
+                  {/* Los arbolitos */}
+                  {[...Array(5)].map((_, i) => (
+                    <div key={i} className="flex flex-col items-center relative z-10">
+                      {/* Las hojas (copa del árbol - verde natural) */}
+                      <motion.div 
+                        className="w-7 h-7 bg-[#4caf50] rounded-full shadow-sm z-10 border border-[#388e3c]"
+                        initial={{ scale: 0 }}
+                        whileInView={{ scale: 1 }}
+                        transition={{ delay: 0.3 + i * 0.15, duration: 0.6, type: "spring", bounce: 0.5 }}
+                        viewport={{ once: true }}
+                      />
+                      {/* El tronco */}
+                      <motion.div 
+                        className="w-2.5 bg-[#795548] rounded-t-sm -mt-2"
+                        initial={{ height: 0 }}
+                        whileInView={{ height: "28px" }}
+                        transition={{ delay: i * 0.15, duration: 0.5, ease: "easeOut" }}
+                        viewport={{ once: true }}
+                      />
+                    </div>
+                  ))}
+                  
+                  {/* Base de tierra/pasto */}
+                  <div className="absolute bottom-0 left-0 w-full h-3 bg-[#fca5a5] opacity-30 rounded-b-xl" />
+                </div>
+              </div>
+            </motion.div>
+
+            {/* EJE 3: Mitigación y Cambio Climático */}
+            <motion.div
+              variants={itemVariants}
+              whileHover={{ scale: 1.02 }}
+              className="group relative flex flex-col justify-between gap-6 p-10 bg-white rounded-[3rem] border border-gray-100 hover:border-[#dc2626]/40 transition-all shadow-sm hover:shadow-xl overflow-hidden"
+            >
+              {/* --- ANIMACIÓN: LA NUBE FLOTANTE --- */}
+              <motion.div
+                animate={{ y: [-5, 5, -5] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute top-6 right-6 opacity-10 pointer-events-none z-0"
+              >
+                <Cloud size={100} className="text-red-500" fill="currentColor" />
+              </motion.div>
+
+              <div className="relative z-10">
+                <div className="w-16 h-16 mb-6 flex items-center justify-center rounded-2xl bg-red-50 text-red-600 transition-colors duration-300 group-hover:bg-[#7f1d1d] group-hover:text-white">
+                  <Cloud size={32} />
+                </div>
+                <h4 className="font-bold text-2xl text-[#7f1d1d] mb-3">Mitigación y Cambio Climático</h4>
+                <p className="text-gray-500 font-normal leading-relaxed mb-6">
+                  Entendemos que somos pieza importante para la mitigación. Realizamos la primera medición de nuestras emisiones de Gases Efecto Invernadero (GEI).
+                </p>
+                
+                {/* Tarjetas de Medición de Gases con partículas */}
+                <div className="space-y-4 relative">
+                  
+                  <div className="bg-gradient-to-br from-slate-50 to-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between relative overflow-hidden">
+                    {/* Partículas animadas de CO2 bajando (captura) */}
+                    <motion.div animate={{ y: [-10, 20], opacity: [0, 1, 0] }} transition={{ duration: 2.5, repeat: Infinity }} className="absolute right-4 top-1 text-[8px] font-bold text-slate-400">CO₂</motion.div>
+                    
+                    <div>
+                      <h5 className="font-black text-slate-700 uppercase tracking-wide text-xs mb-1">CO₂ Capturado</h5>
+                      <p className="text-xs text-slate-500 font-bold">Mitigación activa</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-2xl font-black text-slate-700">
+                        <AnimatedNumber end={557} /> <span className="text-sm font-bold">Mil ton.</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="bg-gradient-to-br from-[#fef2f2] to-white p-5 rounded-2xl border border-[#fee2e2] shadow-sm flex items-center justify-between relative overflow-hidden">
+                    {/* Partículas animadas de O2 subiendo (liberación) */}
+                    <motion.div animate={{ y: [20, -10], opacity: [0, 1, 0] }} transition={{ duration: 2, repeat: Infinity, delay: 0.5 }} className="absolute right-4 bottom-1 text-[8px] font-bold text-[#dc2626]">O₂</motion.div>
+
+                    <div>
+                      <h5 className="font-black text-[#7f1d1d] uppercase tracking-wide text-xs mb-1">O₂ Liberado</h5>
+                      <p className="text-xs text-[#dc2626] font-bold">Aporte de oxígeno</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-2xl font-black text-[#dc2626]">
+                        <AnimatedNumber end={390} /> <span className="text-sm font-bold">Mil ton.</span>
+                      </p>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </motion.div>
+
+          </div>
+
+          {/* ================= ACCIONES CLAVES PARA LA MITIGACIÓN ================= */}
+          <motion.div variants={itemVariants} className="bg-[#7f1d1d] rounded-[3rem] p-8 md:p-12 shadow-2xl relative overflow-hidden">
+             {/* Decoración de fondo */}
+             <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3"></div>
+             
+             <div className="relative z-10 mb-10 text-center md:text-left">
+               <h3 className="text-3xl md:text-4xl font-black text-white mb-3">Acciones Claves para la Mitigación</h3>
+               <p className="text-[#fca5a5] text-lg font-medium">Iniciativas estratégicas para reducir nuestro impacto ambiental.</p>
+             </div>
+
+             <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+               {accionesClaves.map((accion, index) => (
+                 <motion.div 
+                   key={index}
+                   whileHover={{ y: -5, scale: 1.02 }}
+                   className="bg-white/10 backdrop-blur-md border border-white/10 p-5 rounded-2xl flex items-start gap-4 shadow-lg"
+                 >
+                   <div className="shrink-0 w-8 h-8 rounded-full bg-[#dc2626] text-white flex items-center justify-center font-black text-sm shadow-md">
+                     {index + 1}
+                   </div>
+                   <p className="text-white/90 text-sm font-medium leading-relaxed">
+                     {accion}
+                   </p>
+                 </motion.div>
+               ))}
+             </div>
+          </motion.div>
+
+          {/* PIE DE SECCIÓN: REPORTE (Sin cursiva y con fuente estricta) */}
+          <motion.div 
+            variants={itemVariants}
+            className="flex flex-col md:flex-row items-center justify-between p-8 bg-[#fef2f2] rounded-[2rem] border border-[#fee2e2] shadow-sm"
+          >
+            <div className="flex items-center gap-4 mb-4 md:mb-0">
+              <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-[#fca5a5]">
+                <Leaf className="text-[#dc2626]" size={24} />
+              </div>
+              <p className="text-sm font-bold text-[#7f1d1d]">
+                Riopaila Agrícola: Construyendo un futuro sostenible hectárea a hectárea.
               </p>
             </div>
-
-            {/* BARRAS DE DATOS ANIMADAS */}
-            <div className="space-y-6">
-              {/* Barra 1: Riego Tecnificado */}
-              <div>
-                <div className="flex justify-between text-sm font-bold text-red-800 mb-2">
-                  <span>Riego por Ventanas (Eficiencia)</span>
-                  <span className="text-blue-600">+10%</span>
-                </div>
-                <div className="h-3 w-full bg-blue-100 rounded-full overflow-hidden relative">
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    whileInView={{ width: "100%" }}
-                    transition={{ duration: 2, ease: "easeOut", delay: 0.2 }}
-                    className="absolute top-0 left-0 h-full bg-blue-500 rounded-full"
-                  />
-                </div>
-                <p className="text-[10px] text-gray-500 font-bold uppercase mt-2 tracking-wider">Incremento de área cubierta, reduciendo riego por sifones.</p>
-              </div>
-
-              {/* Barra 2: Consumo Específico */}
-              <div>
-                <div className="flex justify-between text-sm font-bold text-red-800 mb-2">
-                  <span>Meta Consumo Específico</span>
-                  <span className="text-red-600">1.070 m³/Ha</span>
-                </div>
-                <div className="h-3 w-full bg-red-100 rounded-full overflow-hidden relative">
-                  <div className="absolute top-0 left-0 h-full w-[100%] bg-gray-200" />
-                  <motion.div 
-                    initial={{ width: "100%" }}
-                    whileInView={{ width: "85%" }} 
-                    transition={{ duration: 2, ease: "easeOut", delay: 0.5 }}
-                    className="absolute top-0 left-0 h-full bg-red-500 rounded-r-full"
-                  />
-                </div>
-                <p className="text-[10px] text-gray-500 font-bold uppercase mt-2 tracking-wider">Compromiso continuo de reducción de huella hídrica.</p>
-              </div>
-            </div>
-          </div>
-          
-          {/* Tarjetas Visuales (Derecha) */}
-          <div className="flex flex-col gap-6 w-full lg:w-1/2">
-            <motion.div 
-              whileHover={{ y: -5 }}
-              className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm flex items-center justify-between"
-            >
-              <div>
-                <p className="text-3xl md:text-4xl font-black text-red-800 mb-1">1.070</p>
-                <p className="text-xs uppercase font-bold text-gray-400 tracking-widest mt-1">m³ por Hectárea (Meta)</p>
-              </div>
-              <BarChart3 size={40} className="text-red-200" />
-            </motion.div>
-
-            <motion.div 
-              whileHover={{ y: -5 }}
-              className="bg-gradient-to-r from-red-900 to-red-800 p-8 rounded-[2.5rem] shadow-xl relative overflow-hidden group flex items-center justify-between"
-            >
-              <div className="relative z-10">
-                <p className="text-2xl font-black text-white mb-1">Cuidado de Cuencas</p>
-                <p className="text-xs font-bold text-white/70 mt-1 max-w-[200px] leading-relaxed">
-                  Proyectos de conservación y protección del agua con asociaciones.
-                </p>
-              </div>
-              <ShieldCheck size={48} className="text-yellow-400 relative z-10" />
-              <div className="absolute -right-10 -top-10 w-32 h-32 bg-white/5 rounded-full blur-2xl group-hover:bg-yellow-400/20 transition-colors" />
-            </motion.div>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* ================= EJES 2 y 3: TARJETAS INTERACTIVAS ================= */}
-      <div className="grid md:grid-cols-2 gap-8 max-w-7xl mx-auto px-4">
-        
-        {/* EJE 2: Cambio Climático */}
-        <motion.div
-          variants={itemVariants}
-          whileHover={{ scale: 1.02 }}
-          className="group relative flex flex-col justify-between gap-6 p-10 bg-white rounded-[3rem] border border-gray-100 hover:border-red-300 transition-all shadow-sm hover:shadow-xl overflow-hidden"
-        >
-          <div className="absolute -bottom-10 -right-10 opacity-[0.03] group-hover:scale-110 transition-transform duration-700">
-             <Factory size={250} />
-          </div>
-
-          <div className="relative z-10">
-            <div className={`w-16 h-16 mb-6 flex items-center justify-center rounded-2xl bg-orange-50 text-orange-600 transition-colors duration-300 group-hover:bg-orange-500 group-hover:text-white`}>
-              <Wind size={32} />
-            </div>
-            <h4 className="font-bold text-2xl text-red-800 mb-3">Mitigación y Cambio Climático</h4>
-            <p className="text-gray-600 font-normal leading-relaxed mb-6">
-              Entendemos que somos pieza importante para la mitigación. Realizamos la primera medición de nuestras emisiones de <strong>Gases Efecto Invernadero (GEI)</strong>.
-            </p>
             
-            {/* Box Destacado: O2 y CO2 */}
-            <div className="grid grid-cols-1 gap-4 mt-8">
-              <div className="bg-gradient-to-br from-green-50 to-white p-5 rounded-2xl border border-green-100 shadow-sm flex items-center gap-4">
-                <div className="bg-green-100 text-green-700 p-3 rounded-xl"><Leaf size={24} /></div>
-                <div>
-                  <p className="text-2xl font-black text-green-700">390 Mil <span className="text-sm">ton aprox.</span></p>
-                  <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">O₂ Liberado</p>
-                </div>
-              </div>
-              
-              <div className="bg-gradient-to-br from-blue-50 to-white p-5 rounded-2xl border border-blue-100 shadow-sm flex items-center gap-4">
-                <div className="bg-blue-100 text-blue-700 p-3 rounded-xl"><Cloud size={24} /></div>
-                <div>
-                  <p className="text-2xl font-black text-blue-700">557 Mil <span className="text-sm">ton aprox.</span></p>
-                  <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">CO₂ Capturado</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* EJE 3: Biodiversidad y Control Biológico */}
-        <motion.div
-          variants={itemVariants}
-          whileHover={{ scale: 1.02 }}
-          className="group relative flex flex-col justify-between gap-6 p-10 bg-white rounded-[3rem] border border-gray-100 hover:border-red-300 transition-all shadow-sm hover:shadow-xl overflow-hidden"
-        >
-          <div>
-            <div className={`w-16 h-16 mb-6 flex items-center justify-center rounded-2xl bg-red-50 text-red-600 transition-colors duration-300 group-hover:bg-red-800 group-hover:text-white`}>
-              <Bug size={32} />
-            </div>
-            <h4 className="font-bold text-2xl text-red-800 mb-3">Control y Corredores Biológicos</h4>
-            <p className="text-gray-600 font-normal leading-relaxed mb-6">
-              Estrategia sectorial con <strong>cero aplicaciones de insecticidas</strong>. Mantenemos el equilibrio del ecosistema mediante fauna benéfica y vegetación natural.
-            </p>
-            
-            {/* Métricas Control Biológico */}
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="bg-red-50/50 p-4 rounded-2xl border border-red-100">
-                <p className="text-2xl font-black text-red-700">1.1%</p>
-                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Infestación Diatraea (Menor al 5% límite)</p>
-              </div>
-              <div className="bg-red-50/50 p-4 rounded-2xl border border-red-100">
-                <p className="text-2xl font-black text-red-700">211</p>
-                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Hectáreas de Área Forestal Conservada</p>
-              </div>
-            </div>
-
-            <div className="inline-flex items-center gap-2 text-xs font-bold text-red-800 bg-red-50 px-4 py-2 rounded-xl">
-              <Trees size={16} /> Contribuyendo al equilibrio del entorno.
-            </div>
-          </div>
-        </motion.div>
-
-      </div>
-
-      {/* ================= SECCIÓN: ACCIONES CLAVES (Basado en la Infografía) ================= */}
-      <motion.div 
-        variants={itemVariants}
-        className="max-w-7xl mx-auto px-4 pt-10"
-      >
-        <div className="bg-white rounded-[3rem] p-10 md:p-14 border border-gray-100 shadow-xl relative overflow-hidden">
-          <div className="absolute right-0 top-0 w-1/3 h-full bg-gradient-to-l from-red-50 to-transparent opacity-50 pointer-events-none" />
+            <Link 
+              href="/sostenibilidad/informes" 
+              className="text-xs font-black uppercase tracking-widest text-[#7f1d1d] hover:text-[#dc2626] transition-colors border-b-2 border-[#dc2626] pb-1"
+            >
+              Ver Informe de Sostenibilidad
+            </Link>
+          </motion.div>
           
-          <div className="text-center mb-12 relative z-10">
-            <h3 className="text-3xl md:text-4xl font-black text-red-800 mb-4">Acciones Claves para la Mitigación</h3>
-            <p className="text-gray-500 font-medium">Iniciativas estratégicas para reducir el impacto ambiental</p>
-          </div>
-
-          <div className="grid gap-4 md:gap-6 max-w-4xl mx-auto relative z-10">
-            {accionesClaves.map((accion, i) => (
-              <motion.div 
-                key={i}
-                whileHover={{ x: 10 }}
-                className="flex items-center gap-6 p-5 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all hover:border-red-200"
-              >
-                <div className="w-12 h-12 rounded-full bg-red-100 text-red-800 font-black text-xl flex items-center justify-center shrink-0 border-2 border-white shadow-inner">
-                  {i + 1}
-                </div>
-                <p className="text-gray-700 font-medium md:text-lg leading-snug">
-                  {accion}
-                </p>
-              </motion.div>
-            ))}
-          </div>
         </div>
       </motion.div>
-
-      {/* PIE DE SECCIÓN: REPORTE */}
-      <motion.div 
-        variants={itemVariants}
-        className="flex flex-col md:flex-row items-center justify-between p-8 bg-red-900 rounded-[2rem] max-w-7xl mx-auto mx-4 shadow-xl"
-      >
-        <div className="flex items-center gap-4 mb-4 md:mb-0">
-          <div className="w-12 h-12 bg-white/10 border border-white/20 rounded-full flex items-center justify-center shadow-sm">
-            <Leaf className="text-yellow-400" size={24} />
-          </div>
-          <p className="text-sm font-bold text-white italic">Cultivando acciones para el futuro en el 2024 y más allá.</p>
-        </div>
-        
-        <Link 
-          href="/sostenibilidad/informes" 
-          className="flex items-center gap-2 bg-white text-red-900 px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest hover:bg-yellow-400 transition-colors"
-        >
-          Ver Informe Completo <ArrowRight size={14} />
-        </Link>
-      </motion.div>
-    </motion.div>
-  )
-}
-
-// Icono extra 
-function Cloud(props: any) {
-  return (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
-    </svg>
+    </>
   )
 }
