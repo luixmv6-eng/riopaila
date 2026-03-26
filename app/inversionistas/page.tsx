@@ -239,32 +239,33 @@ const EstructuraView = () => (
           </thead>
           <tbody className="text-red-900">
             {[
-              { n: "Cumbres SAS", a: "1.364.166", p: "6,97%" },
-              { n: "Delta Caicedo S.A.S", a: "1.236.391", p: "6,32%" },
-              { n: "Desarrollos Pacifico S.A.S.", a: "1.236.390", p: "6,32%" },
-              { n: "Titan Gea S.A.S.", a: "1.234.923", p: "6,31%" },
-              { n: "Inversiones Bellavista y Cia S. en C.", a: "1.021.575", p: "5,22%" },
-              { n: "San Martin Botero S.A.S.", a: "1.020.336", p: "5,21%" },
-              { n: "Aratamma S.A.S.", a: "1.019.800", p: "5,21%" },
-              { n: "San Mateo y Cia S.A.S.", a: "1.019.800", p: "5,21%" },
-              { n: "Santa Carolina Botero S.A.S.", a: "1.011.808", p: "5,17%" },
-              { n: "San Antonio Botero S.A.S", a: "1.010.637", p: "5,16%" },
-              { n: "Colombina S.A.", a: "950.904", p: "4,86%" },
-              { n: "Gonzalez Holmann S.A.S.", a: "637.518", p: "3,26%" },
-              { n: "Proyectos González y Cia.S.C.A.", a: "637.499", p: "3,26%" },
-              { n: "B.G. Ulloa y Cia S.C.A.", a: "637.492", p: "3,26%" },
-              { n: "F.G.Victoria y Cia. S.C.A.", a: "637.474", p: "3,26%" },
-              { n: "B.G. Garrido S.A.S.", a: "637.471", p: "3,26%" },
-              { n: "J.M.C. y Cia. S.A.", a: "602.533", p: "3,08%" },
-              { n: "La Campiña Caicedo y Cia S.A.S.", a: "412.917", p: "2,11%" },
-              { n: "Lumumba S.A.S", a: "412.913", p: "2,11%" },
-              { n: "Belisario Caicedo Capurro", a: "412.881", p: "2,11%" },
-              { n: "Alianza Fiduciaria S.A.- Fideicomiso 3535-1493 acciones Cali", a: "407.512", p: "2,08%" },
-              { n: "Inversiones González Garcés y Cía. S.C.A.", a: "318.406", p: "1,63%" },
-              { n: "Inversiones González Cabal y Cía. S.C.A.", a: "318.405", p: "1,63%" },
-              { n: "Inversiones B.J. González S.A.S.", a: "214.034", p: "1,09%" },
-              { n: "Valores González Peñaranda SAS", a: "201.644", p: "1,03%" },
-              { n: "Otros accionistas con menor participación", a: "962.649", p: "4,92%" }
+              { n: "Santa Carolina Botero S.A.S.", a: "3.998.709", p: "11,85%" },
+{ n: "Alianza Fiduciaria - Fideicomiso Orus", a: "2.527.379", p: "7,49%" },
+{ n: "Aratamma S.A.S.", a: "2.009.040", p: "5,95%" },
+{ n: "San Mateo y Cía. S.A.S.", a: "2.009.040", p: "5,95%" },
+{ n: "San Antonio Botero S.A.S.", a: "1.989.841", p: "5,90%" },
+{ n: "Inversiones Bellavista y Cía. S. en C.", a: "1.892.109", p: "5,61%" },
+{ n: "González Holmann S.A.S", a: "1.247.727", p: "3,70%" },
+{ n: "Proyectos González y Cía. S.C.A.", a: "1.247.706", p: "3,70%" },
+{ n: "B.G. Ulloa y Cía. S.C.A.", a: "1.247.699", p: "3,70%" },
+{ n: "F.G. Victoria y Cía. S.C.A.", a: "1.247.679", p: "3,70%" },
+{ n: "B.G. Garrido S.A.S", a: "1.245.785", p: "3,69%" },
+{ n: "J. M. C. & Cía. S.A.", a: "1.124.895", p: "3,33%" },
+{ n: "Mauricio Herrera Herrera", a: "855.336", p: "2,53%" },
+{ n: "La Campiña Caicedo & Cía. S. en C.", a: "847.561", p: "2,51%" },
+{ n: "Babilonia Caicedo & Cía. S. en C.", a: "846.091", p: "2,51%" },
+{ n: "Hacienda La Independencia S.A.S.", a: "803.595", p: "2,38%" },
+{ n: "Alianza Fiduciaria S.A.- Fideicomiso 35351493 Acciones Cali", a: "713.937", p: "2,12%" },
+{ n: "Federico Guillermo Pfeil Schneider Rodríguez", a: "703.433", p: "2,08%" },
+{ n: "Circonia S.A.S.", a: "701.496", p: "2,08%" },
+{ n: "Ingrid Beatriz Olga Pfeil Schneider Rodríguez", a: "701.495", p: "2,08%" },
+{ n: "Inversiones González Cabal y Cía. S.C.A.", a: "608.525", p: "1,80%" },
+{ n: "Inversiones González Garcés y Cía. S.C.A.", a: "608.525", p: "1,80%" },
+{ n: "Valores González Tobón SAS", a: "540.361", p: "1,60%" },
+{ n: "Valores González Peñaranda SAS", a: "524.133", p: "1,55%" },
+{ n: "Farallones del Occidente S.A.S", a: "439.536", p: "1,30%" },
+{ n: "Otros accionistas con menor participación", a: "3.063.044", p: "9,08%" },
+
             ].map((row, i) => (
               <tr key={i} className="border-b border-gray-50 hover:bg-gray-50">
                 <td className="py-3 px-2 font-bold">{row.n}</td>
@@ -273,8 +274,8 @@ const EstructuraView = () => (
               </tr>
             ))}
             <tr className="bg-red-50/50 font-black border-t-2 border-red-800">
-              <td className="py-4 px-4 text-red-900">ACCIONES SUSCRITAS, PAGADAS Y EN CIRCULACIÓN</td>
-              <td className="py-4 text-right tabular-nums pr-2">19.578.078</td>
+              <td className="py-4 px-4 text-red-900">GRAN TOTAL ACCS. SUSCRITAS, PAGADAS Y EN CIRCULACIÓN</td>
+              <td className="py-4 text-right tabular-nums pr-2">33.744.677</td>
               <td className="py-4 text-right pr-2 text-red-900">100,00%</td>
             </tr>
           </tbody>
@@ -831,7 +832,7 @@ const InformeGestionView = () => (
     <DataCard title="Informes de Gestión Anual">
       <div className="grid gap-2">
         <DocumentCell
-          title="Informe de Gestión 2024"
+          title="Informe de Gestión y Sostenibilidad 2024"
           fileName="informes de gestion/1-Castilla-Informe-de-gestion-y-sostenibilidad-2024-DEFINITIVO.pdf"
         />
         <DocumentCell
